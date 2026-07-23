@@ -1,0 +1,17 @@
+# Ignore local CMake build directories
+/build/
+/build*/
+/cmake-build-*/
+
+# Ignore specific IDE build outputs
+/.cmake/
+/out/
+
+# Ignore compiled executables and libraries
+*.exe
+*.a
+*.so
+*.dll
+
+# Ignore .vscode folder
+/.vscode
