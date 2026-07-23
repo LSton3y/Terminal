@@ -81,3 +81,13 @@ void Terminal::exit()
 {
     isRunning = false;
 }
+
+
+std::string Terminal::query()
+{
+    std::string command;
+    std::cout << "> ";
+    std::getline(std::cin, command);
+
+    return command;
+}

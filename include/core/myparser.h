@@ -20,8 +20,13 @@ private:
         "meow"
     };
 
-    // Split commands
-    vec_str splitCommand(const std::string& command);
+    // Splits commands
+    vec_str splitCommand(
+        const std::string& command,
+        bool quoteOpened = false,
+        const char& qType = '\0',
+        const std::string& initialWord = ""
+    );
 
     // Checks parsed commands
     bool isCommandValid(const vec_str& command);

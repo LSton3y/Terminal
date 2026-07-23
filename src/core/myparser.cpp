@@ -2,7 +2,9 @@
 #include <vector>
 #include <iostream>
 #include <stdexcept>
+
 #include "core/myparser.h"
+#include "core/terminal.h"
 
 
 // Type alias for parsed command
@@ -30,34 +32,86 @@ vec_str Parser::parse(const std::string& command)
 }
 
 
-vec_str Parser::splitCommand(const std::string& command)
+vec_str Parser::splitCommand(
+    const std::string& command,
+    bool quoteOpened,
+    const char& qType,
+    const std::string& initalWord
+)
 {
-    // Split command
-    vec_str parsed = vec_str();
-    std::string currentWord = EMPTYSTRING;
+    vec_str parsed;
+    std::string currentWord{ initalWord };
+    bool isFirstWord{ initalWord.empty() ? true : false };
 
-    // Iterate through each letter
+    bool openQuote{ quoteOpened };
+    char quoteType{ qType };
+
+    // Loop through each letter in command
     for (char c : command)
     {
-        // If letter is a space, add current word to parsed
-        if (c == SPACE)
+        // Checks if letter is space and not in a quote
+        if (c == SPACE && !openQuote)
         {
-            // Only add word if it isn't empty
-            if (currentWord != EMPTYSTRING)
+            // Add to parsed if not empty
+            if (!currentWord.empty())
+            {
                 parsed.push_back(currentWord);
-
-            // Reset current word
-            currentWord = EMPTYSTRING;
+                isFirstWord = false;
+            }
+            currentWord.clear();
         }
-        // Else, add lowercase letter to current word
+        // Check if quote and matches current quote type (or if not in a quote)
+        else if ((c == SINGLEQUOTE || c == DOUBLEQUOTE) && (!openQuote || c == quoteType))
+        {
+            if (!openQuote)
+            {
+                // Opening a quote
+                openQuote = true;
+                quoteType = c;
+            }
+            else
+            {
+                // Closing the quote
+                openQuote = false;
+                quoteType = '\0';
+
+                parsed.push_back(currentWord);
+                isFirstWord = false;
+                currentWord.clear();
+            }
+        }
+        // Adds generic letters to the words (makes them lowercase if first command)
         else
         {
-            currentWord += (char)std::tolower(c);
+            currentWord += isFirstWord ? static_cast<char>(std::tolower(c)) : c;
         }
     }
 
-    // Add final word to parsed
-    parsed.push_back(currentWord);
+    if (openQuote)
+    {
+        // Don't push currentWord — hand it off as the seed for the continued word
+        vec_str continuation = splitCommand(
+            Terminal::getInstance()->query(),
+            true,
+            quoteType,
+            currentWord + "\n"
+        );
+        for (const std::string& item : continuation)
+        {
+            parsed.push_back(item);
+        }
+    }
+
+    // Push last word if not empty
+    else if (!currentWord.empty())
+    {
+        parsed.push_back(currentWord);
+    }
+
+    if (parsed.empty())
+    {
+        parsed.push_back(EMPTYSTRING); // preserve "empty command" case
+    }
 
     return parsed;
 }
@@ -66,13 +120,13 @@ vec_str Parser::splitCommand(const std::string& command)
 bool Parser::isCommandValid(const vec_str& command)
 {
     // Check if command is empty
-    if (command[0] == EMPTYSTRING)
+    if (command[0].empty())
     {
         return true;
     }
 
     // Loop through all the valid commands
-    for (std::string cmd : validCommands)
+    for (const std::string& cmd : validCommands)
     {
         // Check if the command matches a valid command
         if (command[0] == cmd)

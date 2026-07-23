@@ -16,6 +16,7 @@ add_executable(MyProject
     src/commands/exit.cpp
     src/commands/help.cpp
     src/commands/clear.cpp
+    src/commands/meow.cpp
 )
 
 # Tell CMake where your header files are located

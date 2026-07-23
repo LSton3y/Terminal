@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 
 class Terminal
@@ -31,4 +32,7 @@ public:
 
     // Exit method
     void exit();
+
+    // Extra query method
+    std::string query();
 };
