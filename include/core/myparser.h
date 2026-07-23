@@ -16,7 +16,8 @@ private:
         "yes",
         "exit",
         "help",
-        "clear"
+        "clear",
+        "meow"
     };
 
     // Split commands

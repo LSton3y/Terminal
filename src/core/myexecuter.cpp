@@ -8,6 +8,7 @@
 #include "commands/exit.h"
 #include "commands/help.h"
 #include "commands/clear.h"
+#include "commands/meow.h"
 
 
 // Type alias for parsed command
@@ -34,6 +35,10 @@ Executer::Executer()
 
     commands["clear"] = [](const vec_str& params) {
         Clear::clear();
+        };
+
+    commands["meow"] = [](const vec_str& params) {
+        Meow::meow();
         };
 }
 
