@@ -41,7 +41,6 @@ vec_str Parser::splitCommand(
 {
     vec_str parsed;
     std::string currentWord{ initalWord };
-    bool isFirstWord{ initalWord.empty() ? true : false };
 
     bool openQuote{ quoteOpened };
     char quoteType{ qType };
@@ -56,7 +55,6 @@ vec_str Parser::splitCommand(
             if (!currentWord.empty())
             {
                 parsed.push_back(currentWord);
-                isFirstWord = false;
             }
             currentWord.clear();
         }
@@ -76,14 +74,13 @@ vec_str Parser::splitCommand(
                 quoteType = '\0';
 
                 parsed.push_back(currentWord);
-                isFirstWord = false;
                 currentWord.clear();
             }
         }
         // Adds generic letters to the words (makes them lowercase if first command)
         else
         {
-            currentWord += isFirstWord ? static_cast<char>(std::tolower(c)) : c;
+            currentWord += c;
         }
     }
 

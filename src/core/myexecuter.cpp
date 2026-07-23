@@ -43,10 +43,24 @@ Executer::Executer()
 }
 
 
+
+std::string lower(const std::string& word)
+{
+    std::string lowerWord;
+
+    for (const char& c : word)
+    {
+        lowerWord += static_cast<char>(std::tolower(c));
+    }
+
+    return lowerWord;
+}
+
+
 void Executer::execute(const vec_str& command)
 {
     // Find the command in commands
-    auto it = commands.find(command[0]);
+    auto it = commands.find(lower(command[0]));
 
     if (it != commands.end())
     {
